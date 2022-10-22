@@ -1,15 +1,17 @@
-INSERT INTO department (name)
-VALUES ("Web Development"),
-       ("Data Science"),
-       ("Math"),
-       ("Electives");
+INSERT INTO department (id, name)
+VALUES (""),
+       (""),
+       (""),
+       ("");
 
-INSERT INTO course_names (name, department)
-VALUES ("Intro to JavaScript", 1),
-       ("Data Science", 2),
-       ("Linear Algebra", 3),
-       ("History of the Internet", 4),
-       ("Machine Learning", 4),
-       ("Game Design", 1 ),
-       ("Cloud Development", 1);
+INSERT INTO role (id, title, salary, department_id)
+VALUES ("", 1),
+       ("", 2),
+       ("", 3),
+       ("", 4),
+       ("", 4),
+       ("", 1 ),
+       ("", 1);
        
+INSERT INTO employee (id, first_name, last_name, roles_id, manager_id)    
+VALUES ("")
