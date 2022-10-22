@@ -1,11 +1,39 @@
 const express = require("express");
 const app = express();
 const sequelize = require("./config/connection");
-const controllers = require("./controllers");
-
+const mysql = require('mysql2');
 const Model = require("./models");
 
-const PORT = 5500;
+const PORT = 5501;
+
+// Express middleware
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+// Connect to database
+const db = mysql.createConnection(
+  {
+    host: 'localhost',
+    // MySQL username,
+    user: 'root',
+    // MySQL password
+    password: 'root123',
+    database: 'employee_db'
+  },
+  console.log(`Connected to the  database.`)
+);
+
+// Query database
+db.query('SELECT * FROM employee', function (err, results) {
+    console.log(results);
+  });
+
+  // Default response for any other request (Not Found)
+  app.use((req, res) => {
+    res.status(404).end();
+  });
+
+
 
 sequelize.sync().then(() => {
     app.listen(PORT, () => {
