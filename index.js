@@ -73,7 +73,7 @@ inquirer
             default:
               // process you want to happen when the user chooses quit 
       }
-    })
+    })};
     //   {
     //     name: "id",
     //     type: "input",

@@ -1,7 +1,7 @@
 const Department = require("./Department");
 const Employee = require("./Employee");
 const Role = require("./Role")
-
+const { Model, DataTypes } = require('sequelize');
 Department.hasMany(Role, {
     foreignKey: "id",
     onDelete: "CASCADE",
@@ -19,10 +19,10 @@ Role.hasMany(Employee,{
 });
 
 
-Manager.hasMany(Employee)
-// .belongsTo(User, {
-//     foreignKey: "user_id",
-// });
+// Manager.hasMany(Employee)
+// // .belongsTo(User, {
+// //     foreignKey: "user_id",
+// // });
 
 
-module.exports = { Department, Employee, Role };
+module.exports = { Department, Employee, Role, Model };
