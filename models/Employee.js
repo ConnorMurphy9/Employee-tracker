@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
-
+const Role = require('./Role')
 class Employee extends Model {}
 
 Employee.init(
@@ -32,22 +32,27 @@ Employee.init(
             type: DataTypes.INTEGER,
             allowNull: false,
             references:{
-                model: "role",
+                model: "Role",
                 key: "id",
+            }},
+            manager_id: {
+                type: DataTypes.INTEGER,
+                references:{
+                model: "Employee",
+                key: "id",
+                //manager_id here
+                }
             },
-            // {
-            //     model: "" //manager_id here
-            // }
-        }
-    },
-
+    
+        },
     {
         sequelize,
-        timestamps: true,
+        timestamps: false,
         freezeTableName: true, //By Default, without true, table will be called users,
         underscored: true,
-        modelName: "employee",
-    },
-)
-
+        modelName: "Employee",
+    }
+);
+// the defined model is the class itself
+console.log(Employee === sequelize.models.Employee); // true
 module.exports = Employee;

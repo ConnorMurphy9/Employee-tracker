@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
-
+const Role = require("./Role")
 class Department extends Model {}
 
 Department.init(
@@ -10,6 +10,10 @@ Department.init(
             allowNull: false,
             primaryKey: true,
             autoIncrement: true,
+            references: {
+                model: Role,
+                key: "id",
+            }
         },
  
         name: {
@@ -22,11 +26,12 @@ Department.init(
     },
     {
         sequelize,
-        timestamps: true,
+        timestamps: false,
         freezeTableName: true,
         underscored: true,
-        modelName: "department",
+        modelName: "Department",
     }
 );
-
+// the defined model is the class itself
+console.log(Department === sequelize.models.Department); // true
 module.exports = Department;

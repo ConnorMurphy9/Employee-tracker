@@ -1,22 +1,30 @@
 const Department = require("./Department");
 const Employee = require("./Employee");
 const Role = require("./Role")
-const { Model, DataTypes } = require('sequelize');
+
+
+// Department.hasMany(Employee, {
+//     foreignKey: "id",
+// });
+
+Employee.belongsTo(Role, {
+    foreignKey: "role_id",
+});
+
+Role.hasMany(Employee, {
+    foreignKey: 'role_id',
+});
+
 Department.hasMany(Role, {
-    foreignKey: "id",
-    onDelete: "CASCADE",
+    foreignKey: "department_id",
 });
 
-Employee.belongsTo(Department, Role, {
-    foreignKey: "id",
-    onDelete: "CASCADE"
-});
+Role.belongsTo(Department, {
+        foreignKey: "department_id",
+    });
 
-Role.hasMany(Employee,{
-    foreignKey: 'id',
-    onDelete: "CASCADE"
 
-});
+
 
 
 // Manager.hasMany(Employee)
@@ -25,4 +33,5 @@ Role.hasMany(Employee,{
 // // });
 
 
-module.exports = { Department, Employee, Role, Model };
+
+module.exports = { Department, Employee, Role };
