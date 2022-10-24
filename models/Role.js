@@ -38,7 +38,7 @@ Role.init(
     {
         sequelize,
     timestamps: false,
-    freezeTableName: true, //By Default, without true, table will be called users,
+    freezeTableName: true, 
     underscored: true,
     modelName: "Role",
     },

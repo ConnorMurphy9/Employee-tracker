@@ -11,7 +11,7 @@ Department.init(
             primaryKey: true,
             autoIncrement: true,
             references: {
-                model: Role,
+                model: "Role",
                 key: "id",
             }
         },

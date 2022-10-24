@@ -6,7 +6,7 @@ const inquirer = require("inquirer");
 const cTable = require('console.table');
 
 const Model = require("./models");
-
+const {Department, Employee, Role} = require("./models");
 const sequelize = require("./config/connection");
 
 const mysql = require("mysql2");
@@ -72,9 +72,22 @@ const con = mysql.createConnection(
           }
         })};
     
-    // const viewAllEmployees = () => {
-    
-    // }
+    const viewAllEmployees = async () => {
+      const sql = `SELECT 
+      Employee.id, 
+      Employee.first_name, 
+      Employee.last_name, 
+      Employee.role_id, 
+      Employee.manager_id, 
+      Role.title, 
+      Role.salary  
+      FROM Employee
+      LEFT OUTER JOIN Role ON Employee.role_id = Role.id`;
+      con.query(sql, (err, res) => {
+          if (err) {return err;}
+          else {console.table(res);}
+          // questions();
+      });questions();}
     
     const addEmployee = async() => {
      await inquirer
@@ -101,29 +114,58 @@ const con = mysql.createConnection(
             message: "Who is the employee's manager?",
         },
       ])
-      .then( (data) => {
-        Model.Employee.create({first_name: data.firstName, last_name: data.lastName,
-      role_id: data.role, manager_id: data.manager
-    });
+      .then( async (data) => {
+        console.log(data);
+      //  query to get role ID based on option they chose, do same for manager
+
+      // const chosenRole = data.role;
   
-        // console.log(newEmployee);
-        // employees.push(newEmployee);
- 
-    
-    })}
+      const roleSearched = await Model.Role.findOne({ where: { title: data.role } });
+      if (roleSearched === null) {
+        console.log('Role not found!');
+      } else {
+        console.log(roleSearched instanceof Model.Role); // true
+        // console.log(Role.title); // 
+      }
+
+      const manager = await Model.Employee.findOne({where: {manager_id: data.manager}});
+      if (manager === null) {
+        console.log('Not found!');
+      } else {
+        console.log(manager instanceof Model.Employee); // true
+        // console.log(Employee.title); // 
+      }
+      
+if (manager === null) {
+  console.log('Not found!');
+} else {
+  console.log(manager instanceof Model.Employee); // true
+
+}
+        Model.Employee.create({first_name: data.firstName, last_name: data.lastName,
+      role_id: roleSearched.id, manager_id: manager
+    });
+    })
+  questions();
+  }
     
     // const updateEmployeeRole = () => {
 
     // }
     
 
-    // const viewAllRoles = () => {
+    const viewAllRoles = () => {
+      const sql = `SELECT * FROM role`;
+      con.query(sql, (err, res) => {
+          if (err) {return err;}
+          else {console.table(res);}
+          questions();
+      });
+    }
 
-    // }
 
-
-    const addRole = () => {
-      inquirer
+    const addRole = async () => {
+      await inquirer
       .prompt([
           {
             name: "roleName",
@@ -143,9 +185,18 @@ const con = mysql.createConnection(
         }
       ])
       .then(async (data) => {
-       await Model.Role.create({title: data.roleName, salary: data.roleSalary});
+       console.log(data);
+        
+       const departmentSearched = await Model.Department.findOne({where: { name: data.roleDepartment }});
+       if (departmentSearched === null) {
+        console.log('Department not found!');
+       } else {
+        console.log(departmentSearched instanceof Model.Department);
+       }
+       await Model.Role.create({title: data.roleName, salary: data.roleSalary, department_id: departmentSearched.id});
         // console.log(newEmployee);
         // employees.push(newEmployee);
+        questions();
     })}
 
 
@@ -177,7 +228,15 @@ const con = mysql.createConnection(
     questions();
 
 
-
+    // const queryRoleId = async (data) => {
+    //   await Role.findOne({ where: { title: data.role } });
+    //   if (Role === null) {
+    //     console.log('Not found!');
+    //   } else {
+    //     console.log(Role instanceof Role); // true
+    //     console.log(Role.title); // 
+    //   }
+    // };
 
 
 

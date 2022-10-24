@@ -23,6 +23,9 @@ Role.belongsTo(Department, {
         foreignKey: "department_id",
     });
 
+// Employee.belongsTo(Employee, {
+
+// })
 
 
 
