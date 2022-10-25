@@ -13,7 +13,7 @@ const mysql = require("mysql2");
 
 require("dotenv").config();
 
-// const employees = [];
+
 
 const con = mysql.createConnection(
   {
@@ -72,6 +72,7 @@ const con = mysql.createConnection(
           }
         })};
     
+        
     const viewAllEmployees = async () => {
       const sql = `SELECT 
       Employee.id, 
@@ -85,10 +86,10 @@ const con = mysql.createConnection(
       LEFT OUTER JOIN Role ON Employee.role_id = Role.id`;
       con.query(sql, (err, res) => {
           if (err) {return err;}
-          else {console.table(res);}
-          // questions();
-      });questions();}
+          else {console.table("\n", res);}
+          questions()});}
     
+
     const addEmployee = async() => {
      await inquirer
       .prompt([
@@ -115,25 +116,19 @@ const con = mysql.createConnection(
         },
       ])
       .then( async (data) => {
-        console.log(data);
-      //  query to get role ID based on option they chose, do same for manager
-
-      // const chosenRole = data.role;
-  
+ 
       const roleSearched = await Model.Role.findOne({ where: { title: data.role } });
       if (roleSearched === null) {
         console.log('Role not found!');
       } else {
-        console.log(roleSearched instanceof Model.Role); // true
-        // console.log(Role.title); // 
+        console.log(roleSearched instanceof Model.Role);
       }
 
       const manager = await Model.Employee.findOne({where: {manager_id: data.manager}});
       if (manager === null) {
         console.log('Not found!');
       } else {
-        console.log(manager instanceof Model.Employee); // true
-        // console.log(Employee.title); // 
+        console.log(manager instanceof Model.Employee); 
       }
       
 if (manager === null) {
@@ -146,13 +141,47 @@ if (manager === null) {
       role_id: roleSearched.id, manager_id: manager
     });
     })
+
   questions();
   }
     
-    // const updateEmployeeRole = () => {
+    const updateEmployeeRole = async () => {
+      const employeesArray = await sequelize.query("Select id AS value, CONCAT(first_name, ' ', last_name) AS name FROM Employee");
+      const employees = employeesArray[0];
 
-    // }
-    
+      const rolesArray = await sequelize.query("Select id AS value, title AS name FROM Role");
+   
+      const roles = rolesArray[0];
+      await inquirer
+        .prompt ([
+          {
+            name: "whichEmployee",
+            type: "list",
+            message: "Which employee's role do you want to update?",
+            choices: employees
+          },
+          {
+            name: "assignRole",
+            type: "list",
+            message: "Which role do you want to assign the selected employee? Select 1 for Sales Lead, 2 for Salesperson, 3 for Lead Engineer, 4 for Software Engineer, 5 for Account Manager, 6 for Accountant, 7 for Legal Team Lead, and 8 for Lawyer",
+            choices: roles
+          }
+        ])
+        .then(async (data) => {
+          console.log("This is the data = " + data);
+          console.log("This is data.assignRole = " + data.assignRole);
+          console.log("This is data.whichEmployee = " + data.whichEmployee);
+          console.log("This is simply roles = " + roles);
+          console.log("This is simply employees = " + employees);
+            await Employee.update({ role_id: data.assignRole}, {
+              where: 
+                {
+                  id: data.whichEmployee
+                }
+            });
+            questions();
+        })
+      }
 
     const viewAllRoles = () => {
       const sql = `SELECT * FROM role`;
@@ -165,6 +194,15 @@ if (manager === null) {
 
 
     const addRole = async () => {
+
+// const employeesArray = await sequelize.query("Select id AS value, CONCAT(first_name, ' ', last_name) AS name FROM Employee");
+//       const employees = employeesArray[0];
+
+// const departmentArray = await sequelize.query("Select id AS value, name AS name FROM Department");
+// console.log("This is departmentArray: " + departmentArray)
+//    const departments = departmentArray[0];
+// console.timeLog("This is simply departments: " + departments);
+
       await inquirer
       .prompt([
           {
@@ -185,8 +223,8 @@ if (manager === null) {
         }
       ])
       .then(async (data) => {
-       console.log(data);
-        
+    
+  
        const departmentSearched = await Model.Department.findOne({where: { name: data.roleDepartment }});
        if (departmentSearched === null) {
         console.log('Department not found!');
@@ -194,8 +232,6 @@ if (manager === null) {
         console.log(departmentSearched instanceof Model.Department);
        }
        await Model.Role.create({title: data.roleName, salary: data.roleSalary, department_id: departmentSearched.id});
-        // console.log(newEmployee);
-        // employees.push(newEmployee);
         questions();
     })}
 
@@ -218,47 +254,14 @@ if (manager === null) {
             type: "input",
             message: "What is the name of the department?",
           },
-          
       ])
         .then( async (data) => {
        await Model.Department.create({name: data.name});
     });questions();};
 
-
     questions();
 
-
-    // const queryRoleId = async (data) => {
-    //   await Role.findOne({ where: { title: data.role } });
-    //   if (Role === null) {
-    //     console.log('Not found!');
-    //   } else {
-    //     console.log(Role instanceof Role); // true
-    //     console.log(Role.title); // 
-    //   }
-    // };
-
-
-
-
-// const PORT = 5500;
-
-
-// console.table([
-//   {
-//     name: 'foo',
-//     age: 10
-//   }, {
-//     name: 'bar',
-//     age: 20
-//   }
-// ]);
-
-// // prints
-// name  age
-// ----  ---
-// foo   10
-// bar   20
+   
 
 
 
@@ -271,40 +274,10 @@ if (manager === null) {
 
 
 
-    //   {
-    //     name: "id",
-    //     type: "input",
-    //     message: "What is the manager's id?",
-    //   },
-    //   {
-    //     name: "email",
-    //     type: "input",
-    //     message: "What is the manager's email?",
-    //   },
-    //   {
-    //     name: "officeNumber",
-    //     type: "input",
-    //     message: "What is the manager's office number?",
-    //   },
-    // ])
-    // .then((data) => {
 
 
 
 
 
-    // })};
 
 
-    // // get the client
-    // const mysql = require('mysql2');
-    // // create the connection
-    // const con = mysql.createConnection(
-    //   {host:'localhost', user: 'root', database: 'test'}
-    // );
-    // con.query("SELECT 1")
-    // .then( ([rows, fields]) => {
-    //   console.log(rows);
-    // })
-    // .catch(console.log)
-    // .then( () => con.end());
